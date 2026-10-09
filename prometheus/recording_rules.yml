@@ -1,0 +1,23 @@
+groups:
+  - name: monitoring_recording_rules
+    interval: 30s
+
+    rules:
+
+      - record: instance:node_cpu_utilisation:10m
+        expr: |
+          100 - (
+            avg by(instance) (
+              rate(node_cpu_seconds_total{mode="idle"}[10m])
+            ) * 100
+          )
+
+      - record: instance:node_memory_utilisation:10m
+        expr: |
+          100 * (
+            1 -
+            (
+              node_memory_MemAvailable_bytes /
+              node_memory_MemTotal_bytes
+            )
+          )
